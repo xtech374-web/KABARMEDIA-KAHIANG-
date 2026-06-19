@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kabar Media Ekskul | Recruitment</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- Reset & Root Variable --- */
+        :root {
+            --primary-blue: #0077ff; 
+            --vibrant-cyan: #00f2fe; 
+            --vibrant-pink: #ff007f; 
+            --bg-color: #f0f9ff; /* Biru super muda, hampir putih */
+            --text-dark: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --font-main: 'Poppins', sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Mencegah scrollbar muncul karena animasi background */
+            padding: 20px;
+            position: relative;
+        }
+
+        /* --- Area Animasi Background (Sekarang Dinamis lewat JS) --- */
+        #bg-animation-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0; /* Di belakang poster */
+            overflow: hidden;
+        }
+
+        /* Styling elemen yang dihasilkan JS */
+        .floating-element {
+            position: absolute;
+            list-style: none;
+            /* Warna biru transparan dengan campuran sedikit warna aksen */
+            background: linear-gradient(135deg, rgba(0, 119, 255, 0.1), rgba(0, 242, 254, 0.05));
+            color: rgba(0, 119, 255, 0.2); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            pointer-events: none; /* Agar tidak mengganggu klik pada poster */
+            animation: animateFloating linear infinite;
+            bottom: -150px; /* Start dari bawah layar */
+        }
+
+        /* Keyframes Animasi: Terbang ke atas + goyang kiri kanan + rotasi + hilang */
+        @keyframes animateFloating {
+            0% {
+                transform: translateY(0) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1; /* Muncul perlahan setelah start */
+            }
+            50% {
+                /* Efek goyang di tengah jalan */
+                transform: translateY(-50vh) translateX(50px) rotate(180deg);
+            }
+            100% {
+                /* Selesai di atas layar */
+                transform: translateY(-110vh) translateX(-20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- Main Poster Card (Tetap Stand Out di tengah) --- */
+        .main-poster {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 450px; 
+            border-radius: 30px;
+            padding: 35px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; /* Di atas background animation */
+            z-index: 10;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-poster:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 119, 255, 0.15);
+        }
+
+        /* Garis gradasi dekoratif di atas poster */
+        .main-poster::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--vibrant-cyan), var(--primary-blue), var(--vibrant-pink));
+        }
+
+        /* --- Header: Logo & Judul --- */
+        .header-poster {
+            text-align: center;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .logo-container {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-ekskul {
+            max-height: 100px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-placeholder {
+            width: 75px;
+            height: 75px;
+            border-radius: 20px; /* Sedikit kotak modern */
+            background: linear-gradient(45deg, var(--primary-blue), var(--vibrant-cyan));
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-family: var(--font-heading);
+            font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0,119,255,0.3);
+        }
+
+        .tagline {
+            font-size: 11px;
+            letter-spacing: 3px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+        }
+
+        .judul-utama {
+            font-family: var(--font-heading);
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .judul-utama .highlight {
+            background: linear-gradient(to right, var(--primary-blue), var(--vibrant-cyan), var(--vibrant-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* Efek sedikit glow pada teks */
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* --- Intro Deskripsi --- */
+        .intro {
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            color: #475569;
+            padding: 0 5px;
+        }
+
+        /* --- Divisi Cards Section --- */
+        .divisi-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .kartu-divisi {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            padding: 18px 20px;
+            display: grid;
+            grid-template-columns: 55px 1fr;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek hover pada kartu: background menyala putih */
+        .kartu-divisi:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 119, 255, 0.1);
+        }
+
+        /* Sedikit aksen warna pada sisi kiri saat hover */
+        .kartu-divisi::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--primary-blue);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 5px 5px 0;
+        }
+        .kartu-divisi:hover::after { transform: scaleY(1); }
+
+        .icon-divisi {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--vibrant-cyan));
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 22px;
+            box-shadow: 0 5px 15px rgba(0, 119, 255, 0.2);
+        }
+
+        .kartu-divisi h3 {
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .kartu-divisi p {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* --- Footer & Tombol Aksi --- */
+        .footer-poster {
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-gabung {
+            background: linear-gradient(45deg, var(--vibrant-pink), #ff4f00);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 0, 127, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek kilauan pada tombol */
+        .btn-gabung::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .btn-gabung:hover::before {
+            left: 100%;
+            top: 100%;
+            opacity: 1;
+        }
+
+        .btn-gabung:hover {
+            box-shadow: 0 15px 30px rgba(255, 0, 127, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .btn-gabung i {
+            transition: transform 0.3s ease;
+        }
+        .btn-gabung:hover i { transform: translateX(5px); }
+
+        .sosmed-container p {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .sosmed-icons {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .icon-link {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Efek shadow warna sosmed */
+        .icon-link.ig {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+            box-shadow: 0 8px 20px rgba(214, 36, 159, 0.2);
+        }
+        .icon-link.wa {
+            background-color: #25D366;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.2);
+        }
+
+        .icon-link:hover {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Responsif untuk Layar HP Sangat Kecil */
+        @media (max-width: 375px) {
+            .main-poster { padding: 25px 20px; }
+            .judul-utama { font-size: 32px; }
+            .kartu-divisi { grid-template-columns: 45px 1fr; padding: 15px; gap: 10px; }
+            .icon-divisi { width: 45px; height: 45px; font-size: 18px; border-radius: 14px; }
+            .kartu-divisi h3 { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-animation-container"></div>
+
+    <main class="main-poster">
+        
+        <header class="header-poster">
+            <div class="logo-container">
+                <img src="logokabmed.png" alt="Logo Ekskul Media" class="logo-ekskul" onerror="this.style.display='none'; document.getElementById('placeholder-logo').style.display='flex';">
+                <div id="placeholder-logo" class="logo-placeholder" style="display:none;">LOGO<br>MEDIA</div>
+            </div>
+            <div class="judul-container">
+                <p class="tagline">OPEN RECRUITMENT</p>
+                <h1 class="judul-utama">KABAR<span class="highlight">MEDIA</span></h1>
+            </div>
+        </header>
+
+        <section class="intro"
+            <p>Bosan jadi penonton? Saatnya kamu yang bikin <i>headline</i>! Join Ekskul kami, asah <i>skill</i>-mu, dan warnai dunia digital sekolah. <br><br><b>LOOKING THROUGH LENS<br>CREATING GREAT DESIGN<br>CONVEYING POSITIVE INFORMATION</b></p>
+        </section>
+
+        <section class="divisi-container">
+            
+            <div class="kartu-divisi">
+                <div class="icon-divisi">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <div>
+                    <h3>Jurnalistik</h3>
+                    <p>Keluarkan bakat Jurnalistikmu! , cari berita yang hype,dan berikan informasi postif yang faktual.</p>
+                </div>
+            </div>
+
+            <div class="kartu-divisi">
+                <div class="icon-divisi">
+                    <i class="fas fa-camera-retro"></i>
+                </div>
+                <div>
+                    <h3>Fotografi & Videografi</h3>
+                    <p>Abadikan setiap momen dan belajar menjadi kameranmen handal.</p>
+                </div>
+            </div>
+
+            <div class="kartu-divisi">
+                <div class="icon-divisi">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h3>Design & Editing</h3>
+                    <p>Keluarkan kreativitas dan ide mu menjadi konten bermutu, kreatif & menjadi konten viral.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <footer class="footer-poster">
+            <button class="btn-gabung" onclick="window.open('https://wa.me/6287821905624', '_blank')">AYO GABUNG EKSKUL KAMI <i class="fas fa-rocket"></i></button>
+            
+            <div class="sosmed-container">
+                <p>Kepoin kami di sini:</p>
+                <div class="sosmed-icons">
+                    <a href="https://www.instagram.com/kabarmediakahiang?igsh=cmsxdzhybzI0MGd6" target="_blank" class="icon-link ig"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/6287821905624" target="_blank" class="icon-link wa"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- 1. MEMBUAT BACKGROUND RAMAI (DINAMIS) ---
+        const bgContainer = document.getElementById('bg-animation-container');
+        
+        // Daftar icon yang akan muncul secara acak
+        const mediaIcons = [
+            'fa-camera', 'fa-microphone', 'fa-pen-nib', 'fa-video', 
+            'fa-play', 'fa-headphones', 'fa-pencil-alt', 'fa-clapperboard',
+            'fa-lightbulb', 'fa-newspaper', 'fa-image', 'fa-mouse-pointer'
+        ];
+
+        // Jumlah elemen mengambang (sesuaikan untuk tingkat keramaian)
+        const numberOfElements = 25; 
+
+        function createFloatingElements() {
+            for (let i = 0; i < numberOfElements; i++) {
+                const element = document.createElement('div');
+                element.classList.add('floating-element');
+                
+                // Masukkan icon acak ke dalam div
+                const randomIcon = mediaIcons[Math.floor(Math.random() * mediaIcons.length)];
+                element.innerHTML = `<i class="fas ${randomIcon}"></i>`;
+
+                // --- Atur Properti Acak lewat Inline Style ---
+                
+                // Posisi Horizontal (0% - 100% lebar layar)
+                element.style.left = `${Math.random() * 100}%`;
+                
+                // Ukuran (antara 30px hingga 100px)
+                const size = Math.random() * 70 + 30;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                
+                // Ukuran Icon di dalamnya (proporsional)
+                element.style.fontSize = `${size * 0.4}px`;
+
+                // Durasi Animasi (antara 10 hingga 25 detik agar ada yang cepat & lambat)
+                element.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                
+                // Delay Animasi (agar tidak muncul barengan di awal)
+                element.style.animationDelay = `${Math.random() * 10}s`;
+
+                // Sedikit variasi opacity dasar
+                element.style.opacity = Math.random() * 0.5 + 0.1;
+
+                bgContainer.appendChild(element);
+            }
+        }
+
+        // Jalankan fungsi setelah halaman dimuat
+        window.addEventListener('load', createFloatingElements);
+
+
+        // --- 2. INTERAKTIVITAS POSTER (EFEK TILT & KLIK) ---
+        const poster = document.querySelector('.main-poster');
+
+        // Efek miring sedikit (3D Tilt) pada poster ketika mouse digerakkan (Hanya PC)
+        document.addEventListener('mousemove', (e) => {
+            if (window.innerWidth > 768) {
+                // Hitung posisi mouse relatif terhadap tengah layar
+                let xAxis = (window.innerWidth / 2 - e.pageX) / 40; // Angka lebih besar = tilt lebih halus
+                let yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+                poster.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+
+        // Mengembalikan posisi semula saat mouse keluar area layar
+        document.addEventListener('mouseleave', () => {
+            poster.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            poster.style.transition = "all 0.5s ease";
+        });
+
+        // Hapus transisi saat mouse masuk lagi agar gerakan tilt instan mengikuti mouse
+        document.addEventListener('mouseenter', () => {
+            poster.style.transition = "none";
+        });
+
+        // Efek klik animasi pada kartu divisi
+        const cards = document.querySelectorAll('.kartu-divisi');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Sedikit denyut saat diklik
+                card.style.transform = 'scale(0.95) translateX(10px)';
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.02) translateX(10px)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
